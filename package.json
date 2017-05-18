@@ -1,0 +1,31 @@
+{
+  "name": "byob",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node_modules/.bin/mocha ./test/**.js",
+    "start": "nodemon server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "csvtojson": "^1.1.5",
+    "express": "^4.15.2",
+    "file-system": "^2.2.2",
+    "knex": "^0.13.0",
+    "nodemon": "^1.11.0",
+    "pg": "^6.2.2"
+  },
+  "devDependencies": {
+    "batch": "^0.6.1",
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb-base": "^11.2.0",
+    "eslint-plugin-import": "^2.2.0",
+    "knex-seed-file": "^0.3.1",
+    "mocha": "^3.4.1"
+  }
+}
