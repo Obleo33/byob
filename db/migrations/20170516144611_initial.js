@@ -1,9 +1,9 @@
-exports.up = function(knex, Promise) {
+exports.up = function (knex, Promise) {
   return Promise.all([
     knex.schema.createTable('users', (table) => {
       table.increments('id').primary();
       table.string('firstname');
-      table.string('lastname')
+      table.string('lastname');
       table.string('email');
       table.timestamps(true, true);
     }),
@@ -40,15 +40,15 @@ exports.up = function(knex, Promise) {
       table.integer('game_id').unsigned();
       table.foreign('game_id').references('games.id');
       table.timestamps(true, true);
-    })
+    }),
 
-  ])
+  ]);
 };
 
-exports.down = function(knex, Promise) {
+exports.down = function (knex, Promise) {
   return Promise.all([
     knex.schema.dropTable('users'),
     knex.schema.dropTable('games'),
-    knex.schema.dropTable('collections')
+    knex.schema.dropTable('collections'),
   ]);
 };
