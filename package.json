@@ -1,10 +1,10 @@
 {
   "name": "byob",
   "version": "1.0.0",
-  "description": "",
+  "description": "* this is a readme",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha ./test/**.js",
+    "test": "mocha ./test/**.js",
     "start": "nodemon server.js"
   },
   "author": "",
@@ -27,5 +27,17 @@
     "eslint-plugin-import": "^2.2.0",
     "knex-seed-file": "^0.3.1",
     "mocha": "^3.4.1"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Obleo33/byob.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/Obleo33/byob/issues"
+  },
+  "homepage": "https://github.com/Obleo33/byob#readme"
 }
