@@ -182,3 +182,5 @@ exports.seed = (database, Promise) => {
        .then(() => database.raw('CREATE DATABASE byob'))
        .then(() => database.raw(sql));
 };
+
+module.exports = app;
