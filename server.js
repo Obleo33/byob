@@ -119,15 +119,27 @@ app.post('/api/v1/users', (request, response) => {
 });
 
 app.patch('/api/v1/users/:user_id', (request, response) => {
-  request.body.email && database('users').where({ email: request.body.email }).first()
-    .then(found => found && response.status(422).send('email already exists in database'));
-
-  database('users').where('id', request.params.user_id).update(request.body, ['id', 'firstname', 'lastname', 'email'])
-  .then((updated) => {
-    if (!updated.length) {
+  database('users').where('id', request.params.user_id).select()
+  .then((selectedUser) => {
+    if (!selectedUser.length) {
       response.sendStatus(404);
     } else {
-      response.status(200).send(updated[0]);
+      if (request.body.email) {
+        database('users').where({ email: request.body.email }).first()
+        .then((found) => {
+          if (found) {
+            response.status(422).send('email already exists in database');
+          } else {
+            database('users').where('id', request.params.user_id).update(request.body, ['id', 'firstname', 'lastname', 'email'])
+            .then(updated => response.status(200).send(updated[0]))
+            .catch(error => response.status().send(error));
+          }
+        });
+      } else {
+        database('users').where('id', request.params.user_id).update(request.body, ['id', 'firstname', 'lastname', 'email'])
+          .then(updated => response.status(200).send(updated[0]))
+          .catch(error => response.status().send(error));
+      }
     }
   })
   .catch(error => response.status(500).send(error));
