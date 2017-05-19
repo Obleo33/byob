@@ -1,4 +1,4 @@
-const csvFilePath='./bgg_db_test_2.csv'
+const csvFilePath='./raw_data/bgg_db_test.csv'
 const csv=require('csvtojson')
 const fs = require('fs');
 
@@ -13,6 +13,6 @@ csv()
 })
 
 .on('done',(error)=>{
-  fs.writeFileSync('byob_games_jsonfile.json', JSON.stringify({ "games": gamesArray }))
+  fs.writeFileSync('byob_games_json_test_file.json', JSON.stringify({ "games": gamesArray }))
     console.log('end')
 })
