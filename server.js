@@ -165,9 +165,11 @@ app.delete('/api/v1/collections/:collection_id', (request, response) => {
         response.sendStatus(404);
       } else {
         database('collections').where({ id: request.params.collection_id }).del()
-        .then(() => response.status(200).send('record deleted'));
+        .then(() => response.status(200).send('record deleted'))
+        .catch(error => response.status(500).send(error));
       }
-    });
+    })
+    .catch(error => response.status(500).send(error));
 });
 
 app.delete('/api/v1/users/:user_id', (request, response) => {
@@ -178,9 +180,11 @@ app.delete('/api/v1/users/:user_id', (request, response) => {
       } else {
         database('collections').where({ user_id: request.params.user_id }).del()
           .then(() => database('users').where({ id: request.params.user_id }).del())
-        .then(() => response.status(200).send('record deleted'));
+        .then(() => response.status(200).send('record deleted'))
+        .catch(error => response.status(500).send(error));
       }
-    });
+    })
+    .catch(error => response.status(500).send(error));
 });
 
 

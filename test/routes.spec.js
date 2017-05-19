@@ -342,13 +342,17 @@ describe('boyb server testing', () => {
       });
     });
 
-    describe('DELETE /api/v1/collcetions/:collection_id', () => {
+    xdescribe('DELETE /api/v1/collcetions/:collection_id', () => {
       it('should remove a collection from the database', (done) => {
         chai.request(server)
         .post('/api/v1/collections')
         .send({
           user_id: 1,
           game_id: 1,
+        }).end((error, response) => {
+          response.should.have.status(201);
+          response.body.user_id.should.equal(1);
+          response.body.game_id.should.equal(1);
         })
         .then(() => {
           chai.request(server)
