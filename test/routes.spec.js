@@ -174,7 +174,7 @@ describe('boyb server testing', () => {
     });
 
     describe('POST /api/v1/users', () => {
-      it('should create a new user', (done) => {
+      xit('should create a new user', (done) => {
         chai.request(server)
         .post('/api/v1/users')
         .send({
