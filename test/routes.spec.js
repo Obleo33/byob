@@ -151,31 +151,27 @@ describe('boyb server testing', () => {
       });
     });
 
-    // describe('POST /api/v1/collecions', () => {
-    //   it('should create a new collection record', (done) => {
-    //     chai.request(server)
-    //     .post('/api/v1/collections')
-    //     .send({
-    //       user_id: 1,
-    //       game_id: 1,
-    //     })
-    //     .end((error, response) => {
-
-    //       response.should.have.status(201);
-    //       response.body.should.be.a('array');
-    //       response.body.should.have.length(1);
-    //       response.body[0].user_id.shoud.equal(1);
-    //       response.body[0].game_id.shoud.equal(1);
-    //
-    //       chai.request(server)
-    //       .delete('/api/v1/users')
-    //       .send({
-    //         user_id: 1,
-    //       })
-    //       done();
-    //     });
-    //   });
-    // });
+    describe('POST /api/v1/collecions', () => {
+      it('should create a new collection record', (done) => {
+        chai.request(server)
+        .post('/api/v1/collections')
+        .send({
+          user_id: 1,
+          game_id: 1,
+        })
+        .end((error, response) => {
+          response.should.have.status(201);
+          response.body.user_id.should.equal(1);
+          response.body.game_id.should.equal(1);
+          chai.request(server)
+          .delete('/api/v1/users')
+          .send({
+            user_id: 1,
+          });
+          done();
+        });
+      });
+    });
 
     describe('POST /api/v1/users', () => {
       it('should create a new user', (done) => {
@@ -254,7 +250,7 @@ describe('boyb server testing', () => {
         });
       });
 
-      xit('should update a specified users email', (done) => {
+      it('should update a specified users email', (done) => {
         chai.request(server)
         .patch('/api/v1/users/1')
         .send({
@@ -269,7 +265,7 @@ describe('boyb server testing', () => {
         });
       });
 
-      xit('should send a 422 if the email exists', (done) => {
+      it('should send a 422 if the email exists', (done) => {
         chai.request(server)
         .patch('/api/v1/users/1')
         .send({
@@ -281,9 +277,21 @@ describe('boyb server testing', () => {
         });
       });
 
-      it('should send a 500 if user does not exist', (done) => {
+      it('should send a 404 if user does not exist', (done) => {
         chai.request(server)
         .patch('/api/v1/users/10')
+        .send({
+          last: 'Hey',
+        })
+        .end((error, response) => {
+          response.should.have.status(404);
+          done();
+        });
+      });
+
+      it('should send a 500 for sad path', (done) => {
+        chai.request(server)
+        .patch('/api/v1/users/sad')
         .send({
           last: 'Hey',
         })
@@ -334,8 +342,25 @@ describe('boyb server testing', () => {
       });
     });
 
-    xdescribe('DELETE /api/v1/collcetions/:collection_id', () => {
+    describe('DELETE /api/v1/collcetions/:collection_id', () => {
       it('should remove a collection from the database', (done) => {
+        chai.request(server)
+        .post('/api/v1/collections')
+        .send({
+          user_id: 1,
+          game_id: 1,
+        })
+        .then(() => {
+          chai.request(server)
+          .delete('/api/v1/users')
+          .send({
+            user_id: 1,
+          })
+          .end((err, res) => {
+            res.should.have.status(200);
+            res.text.should.equal('record deleted');
+          });
+        });
         done();
       });
     });
