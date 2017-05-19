@@ -1,3 +1,4 @@
+/* eslint-env node, mocha */
 process.env.NODE_ENV = 'test';
 
 const environment = 'test';
@@ -6,14 +7,14 @@ const database = require('knex')(configuration);
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const server = require('../server.js');
-const should = chai.should();
+
+chai.should();
 
 
 chai.use(chaiHttp);
 
 describe('boyb server testing', () => {
-
-  before((done) => {
+  beforeEach((done) => {
     database.migrate.latest()
     .then(() => {
       database.seed.run()
@@ -31,13 +32,11 @@ describe('boyb server testing', () => {
   });
 
   describe('API routes', () => {
-
     describe('GET /api/v1/users', () => {
       it('should return all users', (done) => {
         chai.request(server)
         .get('/api/v1/users')
         .end((error, response) => {
-          response.should.be.json;
           response.should.have.status(200);
           response.body.should.be.a('array');
           response.body.should.have.length(2);
@@ -55,7 +54,6 @@ describe('boyb server testing', () => {
         chai.request(server)
         .get('/api/v1/games')
         .end((error, response) => {
-          response.should.be.json;
           response.should.have.status(200);
           response.body.should.be.a('array');
           response.body.should.have.length(10);
@@ -83,7 +81,7 @@ describe('boyb server testing', () => {
           done();
         });
       });
-    }),
+    });
 
     describe('GET /api/v1/users/:user_id', () => {
       it('shoud return a specified user', (done) => {
@@ -108,7 +106,7 @@ describe('boyb server testing', () => {
           done();
         });
       });
-    }),
+    });
 
     describe('GET /api/v1/games/:game_id', () => {
       it('shoud return a specified game', (done) => {
@@ -150,6 +148,207 @@ describe('boyb server testing', () => {
           response.should.have.status(404);
           done();
         });
+      });
+    });
+
+    // describe('POST /api/v1/collecions', () => {
+    //   it('should create a new collection record', (done) => {
+    //     chai.request(server)
+    //     .post('/api/v1/collections')
+    //     .send({
+    //       user_id: 1,
+    //       game_id: 1,
+    //     })
+    //     .end((error, response) => {
+
+    //       response.should.have.status(201);
+    //       response.body.should.be.a('array');
+    //       response.body.should.have.length(1);
+    //       response.body[0].user_id.shoud.equal(1);
+    //       response.body[0].game_id.shoud.equal(1);
+    //
+    //       chai.request(server)
+    //       .delete('/api/v1/users')
+    //       .send({
+    //         user_id: 1,
+    //       })
+    //       done();
+    //     });
+    //   });
+    // });
+
+    describe('POST /api/v1/users', () => {
+      it('should create a new user', (done) => {
+        chai.request(server)
+        .post('/api/v1/users')
+        .send({
+          firstname: 'Tacos',
+          lastname: 'Are',
+          email: 'really@cool.com',
+        })
+        .end((error, response) => {
+          response.should.have.status(201);
+          response.body.firstname.should.equal('Tacos');
+          response.body.lastname.should.equal('Are');
+          response.body.email.should.equal('really@cool.com');
+          done();
+        });
+      });
+
+      it('should send a 422 error if the email is in the database', (done) => {
+        chai.request(server)
+        .post('/api/v1/users')
+        .send({
+          firstname: 'test',
+          lastname: 'testlast',
+          email: 'one@onelast.com',
+        })
+        .end((error, response) => {
+          response.should.have.status(422);
+          done();
+        });
+      });
+
+      it('should send a 422 error if request is missing information', (done) => {
+        chai.request(server)
+        .post('/api/v1/users')
+        .send({
+          firstname: 'test',
+          lastname: 'testlast',
+        })
+        .end((error, response) => {
+          response.should.have.status(422);
+          done();
+        });
+      });
+    });
+
+    describe('PATCH /api/v1/users/:user_id', () => {
+      it('should update a specified users firstname', (done) => {
+        chai.request(server)
+        .patch('/api/v1/users/1')
+        .send({
+          firstname: 'Newname',
+        })
+        .end((error, response) => {
+          response.should.have.status(200);
+          response.body.firstname.should.equal('Newname');
+          response.body.lastname.should.equal('OneLast');
+          response.body.email.should.equal('one@onelast.com');
+          done();
+        });
+      });
+
+      it('should update a specified users lastname', (done) => {
+        chai.request(server)
+        .patch('/api/v1/users/1')
+        .send({
+          lastname: 'NewLast',
+        })
+        .end((error, response) => {
+          response.should.have.status(200);
+          response.body.firstname.should.equal('One');
+          response.body.lastname.should.equal('NewLast');
+          response.body.email.should.equal('one@onelast.com');
+          done();
+        });
+      });
+
+      xit('should update a specified users email', (done) => {
+        chai.request(server)
+        .patch('/api/v1/users/1')
+        .send({
+          email: 'new@email.com',
+        })
+        .end((error, response) => {
+          response.should.have.status(200);
+          response.body.firstname.should.equal('One');
+          response.body.lastname.should.equal('OneLast');
+          response.body.email.should.equal('new@email.com');
+          done();
+        });
+      });
+
+      xit('should send a 422 if the email exists', (done) => {
+        chai.request(server)
+        .patch('/api/v1/users/1')
+        .send({
+          email: 'two@twolast.com',
+        })
+        .end((error, response) => {
+          response.should.have.status(422);
+          done();
+        });
+      });
+
+      it('should send a 500 if user does not exist', (done) => {
+        chai.request(server)
+        .patch('/api/v1/users/10')
+        .send({
+          last: 'Hey',
+        })
+        .end((error, response) => {
+          response.should.have.status(500);
+          done();
+        });
+      });
+    });
+
+    describe('PATCH /api/v1/games/:game_id', () => {
+      it('should update a specified games property', (done) => {
+        chai.request(server)
+        .patch('/api/v1/games/1')
+        .send({
+          min_players: 100,
+        })
+        .end((error, response) => {
+          response.should.have.status(200);
+          response.body.id.should.equal(1);
+          response.body.min_players.should.equal(100);
+          done();
+        });
+      });
+
+      it('should send a 404 if the game is not found', (done) => {
+        chai.request(server)
+        .patch('/api/v1/games/100')
+        .send({
+          names: 'test',
+        })
+        .end((error, response) => {
+          response.should.have.status(404);
+          done();
+        });
+      });
+
+      it('should send a 500 if property is not found', (done) => {
+        chai.request(server)
+        .patch('/api/v1/games/1')
+        .send({
+          tacos: 'test',
+        })
+        .end((error, response) => {
+          response.should.have.status(500);
+          done();
+        });
+      });
+    });
+
+    xdescribe('DELETE /api/v1/collcetions/:collection_id', () => {
+      it('should remove a collection from the database', (done) => {
+        done();
+      });
+    });
+
+    describe('DELETE /api/v1/users/:user_id', () => {
+      it('should remove a user from the database', (done) => {
+        chai.request(server)
+        .delete('/api/v1/users/1')
+        .end((error, response) => {
+          response.should.have.status(200);
+          response.text.should.equal('record deleted');
+        });
+        done();
       });
     });
   });

@@ -84,7 +84,7 @@ app.post('/api/v1/collections', (request, response) => {
     }).first()
     .then((found) => {
       if (found) {
-        response.json('game already in collection');
+        response.status(422).json('game already in collection');
       } else {
         database('collections').insert(collection, ['user_id', 'game_id'])
         .then(collectionResponse => response.status(201).json(collectionResponse[0]))
@@ -106,11 +106,11 @@ app.post('/api/v1/users', (request, response) => {
     }).first()
     .then((found) => {
       if (found) {
-        response.json('email already exists in database');
+        response.status(422).json('email already exists in database');
       } else {
         database('users').insert(user, ['id', 'firstname', 'lastname', 'email'])
         .then(collection => response.status(201).json(collection[0]))
-        .catch(error => response.status(422).send(error));
+        .catch(error => response.sendStatus(422, error));
       }
     });
   } else {
@@ -120,7 +120,7 @@ app.post('/api/v1/users', (request, response) => {
 
 app.patch('/api/v1/users/:user_id', (request, response) => {
   request.body.email && database('users').where({ email: request.body.email }).first()
-    .then(found => found && response.status(400).send('email already exists in database'));
+    .then(found => found && response.status(422).send('email already exists in database'));
 
   database('users').where('id', request.params.user_id).update(request.body, ['id', 'firstname', 'lastname', 'email'])
   .then((updated) => {
@@ -134,7 +134,8 @@ app.patch('/api/v1/users/:user_id', (request, response) => {
 });
 
 app.patch('/api/v1/games/:game_id', (request, response) => {
-  database('games').where('id', request.params.game_id).update(request.body, ['id'])
+  const keys = Object.keys(request.body);
+  database('games').where('id', request.params.game_id).update(request.body, ['id', ...keys])
   .then((updated) => {
     if (!updated.length) {
       response.sendStatus(404);
@@ -152,7 +153,7 @@ app.delete('/api/v1/collections/:collection_id', (request, response) => {
         response.sendStatus(404);
       } else {
         database('collections').where({ id: request.params.collection_id }).del()
-        .then(() => response.status(200).send('record delted'));
+        .then(() => response.status(200).send('record deleted'));
       }
     });
 });
@@ -165,7 +166,7 @@ app.delete('/api/v1/users/:user_id', (request, response) => {
       } else {
         database('collections').where({ user_id: request.params.user_id }).del()
           .then(() => database('users').where({ id: request.params.user_id }).del())
-        .then(() => response.status(200).send('record delted'));
+        .then(() => response.status(200).send('record deleted'));
       }
     });
 });
