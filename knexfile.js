@@ -3,11 +3,11 @@ module.exports = {
     client: 'pg',
     connection: process.env.DATABASE_URL || 'postgres://localhost/byob_test',
     migrations: {
-      directory: __dirname + '/db/migrations'
+      directory: __dirname + '/db/migrations',
     },
     seeds: {
-      directory: __dirname + '/db/seeds/test'
-    }
+      directory: __dirname + '/db/seeds/test',
+    },
   },
 
   development: {
@@ -15,28 +15,19 @@ module.exports = {
     connection: 'postgress://localhost/byob',
     useNullAsDefault: true,
     migrations: {
-      directory: './db/migrations'
+      directory: './db/migrations',
     },
     seeds: {
-      directory: './db/seeds/dev'
-    }
-  },
-
-  staging: {
-    client: 'pg',
-    connection: process.env.DATABASE_URL + `?ssl=true`,
-    migrations: {
-      directory: './db/migrations'
+      directory: './db/seeds/dev',
     },
-    useNullAsDefault: true,
   },
 
   production: {
     client: 'pg',
     connection: process.env.DATABASE_URL + `?ssl=true`,
     migrations: {
-      directory: './db/migrations'
+      directory: './db/migrations',
     },
     useNullAsDefault: true,
-  }
+  },
 };
