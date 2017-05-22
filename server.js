@@ -25,7 +25,14 @@ app.get('/api/v1/users', (request, response) => {
 });
 
 app.get('/api/v1/games', (request, response) => {
-  database('games').select()
+  const keys = Object.keys(request.query);
+  database('games')
+  .select()
+  .modify((qb) => {
+    if (keys.length) {
+      qb.whereRaw(`lower(${keys[0]}) LIKE ?`, `%${request.query[keys[0]].toLowerCase()}%`);
+    }
+  })
   .then(games => response.status(200).json(games))
   .catch(error => response.status(500).send(error));
 });
