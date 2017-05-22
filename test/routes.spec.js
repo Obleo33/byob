@@ -174,7 +174,7 @@ describe('boyb server testing', () => {
     });
 
     describe('POST /api/v1/users', () => {
-      xit('should create a new user', (done) => {
+      it('should create a new user', (done) => {
         chai.request(server)
         .post('/api/v1/users')
         .send({
@@ -342,7 +342,7 @@ describe('boyb server testing', () => {
       });
     });
 
-    xdescribe('DELETE /api/v1/collcetions/:collection_id', () => {
+    describe('DELETE /api/v1/collcetions/:collection_id', () => {
       it('should remove a collection from the database', (done) => {
         chai.request(server)
         .post('/api/v1/collections')
